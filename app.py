@@ -58,16 +58,29 @@ def save_location():
 
 
 @app.route("/lookup", methods=["POST"])
+def lookup():@app.route("/lookup", methods=["POST"])
 def lookup():
     number = request.form.get("number")
+
     try:
+        # Agar + nahi hai to India (+91) maan lo
+        if not number.startswith("+"):
+            number = "+91" + number
+
         parsed = phonenumbers.parse(number)
         isp = carrier.name_for_number(parsed, "en")
         region = geocoder.description_for_number(parsed, "en")
-        return jsonify({"isp": isp, "region": region})
+
+        return jsonify({
+            "isp": isp or "Unknown",
+            "region": region or "Unknown"
+        })
+
     except:
-        return jsonify({"error": "Invalid number"})
+        return jsonify({"error": "Invalid or unsupported phone number"})
+
 
 
 if __name__ == "__main__":
     app.run(debug=True)
+
