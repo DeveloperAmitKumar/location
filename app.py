@@ -84,3 +84,17 @@ def lookup():
 if __name__ == "__main__":
     app.run(debug=True)
 
+
+
+@app.route("/logs")
+def view_logs():
+    try:
+        with open("log.txt") as f:
+            lines = f.readlines()
+    except:
+        lines = []
+
+    return render_template("logs.html", logs=lines)
+
+
+
